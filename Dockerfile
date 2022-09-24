@@ -1,0 +1,14 @@
+# source    - https://github.com/emk/rust-musl-builder/blob/main/Dockerfile
+# dockerhub - https://hub.docker.com/r/ekidd/rust-musl-builder
+FROM ekidd/rust-musl-builder:latest AS builder
+
+COPY . .
+
+RUN cargo build --release --target x86_64-unknown-linux-musl
+
+# working directory of the builder image must be considered (/home/rust/src)
+# check the source for more info
+FROM scratch
+COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/airline_manager4 /bin/airline_manager4
+
+CMD ["/bin/airline_manager4"]
