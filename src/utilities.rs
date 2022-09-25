@@ -1,16 +1,34 @@
+use reqwest;
 use scraper;
 use tl;
 
-// this will be used soon...
-// pub(crate) async fn get_elements_by_selector(response: &str, selector: &str) -> Vec<String> {
-//     let document = scraper::Html::parse_document(response);
+pub(crate) async fn get_elements_by_selector(response: &str, selector: &str) -> Vec<String> {
+    let document = scraper::Html::parse_document(response);
 
-//     let selector_p = scraper::Selector::parse(selector).unwrap();
+    let selector_p = scraper::Selector::parse(selector).unwrap();
 
-//     let elements = document.select(&selector_p).map(|x| x.inner_html());
+    let elements = document.select(&selector_p).map(|x| x.inner_html());
 
-//     return elements.collect();
-// }
+    return elements.collect();
+}
+
+pub(crate) async fn get_elements_text_by_selector(response: &str, selector: &str) -> Vec<String> {
+    let document = scraper::Html::parse_document(response);
+
+    let selector_p = scraper::Selector::parse(selector).unwrap();
+
+    let elements = document.select(&selector_p).map(|x| x.text().collect());
+
+    let mut texts: Vec<String> = Vec::new();
+
+    let elements: Vec<String> = elements.collect();
+
+    for element in elements {
+        texts.push(element.trim().to_string());
+    }
+
+    return texts;
+}
 
 pub(crate) async fn get_element_by_selector(response: &str, selector: &str) -> String {
     let document = scraper::Html::parse_document(response);
@@ -77,4 +95,70 @@ pub(crate) async fn get_element_classes_by_id(
         .collect();
 
     return classes;
+}
+
+pub(crate) async fn get_text_by_selector(response: &str, selector: &str) -> String {
+    let document = scraper::Html::parse_document(response);
+
+    let selector = scraper::Selector::parse(selector).unwrap();
+
+    let texts: Vec<String> = document
+        .select(&selector)
+        .map(|x| x.text().collect())
+        .collect();
+
+    assert_eq!(
+        texts.len(),
+        1,
+        "There should only be one one element for this method to work. found {:#?}.",
+        texts
+    );
+
+    let text = texts.get(0).map(String::as_str).unwrap().trim().to_string();
+
+    return text;
+}
+
+pub(crate) async fn get_attr_by_selector(
+    response: &str,
+    selector: &str,
+    attribute: &str,
+) -> String {
+    let document = scraper::Html::parse_document(response);
+
+    let selector = scraper::Selector::parse(selector).unwrap();
+
+    let elements: Vec<String> = document
+        .select(&selector)
+        .map(|x| x.value().attr(attribute).unwrap().to_string())
+        .collect();
+
+    assert_eq!(
+        elements.len(),
+        1,
+        "There should only be one one element for this method to work. found {:#?}.",
+        elements
+    );
+
+    let element = elements
+        .get(0)
+        .map(String::as_str)
+        .unwrap()
+        .trim()
+        .to_string();
+
+    return element;
+}
+
+pub(crate) async fn get_response_text(url: &str, cookies: &str) -> String {
+    let client = reqwest::Client::new();
+    return client
+        .get(url)
+        .header("Cookie", cookies)
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap_or_default();
 }

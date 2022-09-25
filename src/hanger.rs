@@ -1,19 +1,13 @@
 use crate::utilities::get_element_by_selector;
-use reqwest;
+use crate::utilities::get_response_text;
 
 #[tokio::main]
 pub(crate) async fn get_pax_status(cookies: &str) -> (i16, i16, i16) {
-    let client = reqwest::Client::new();
-
-    let response = client
-        .post("https://www.airlinemanager.com/hangars.php?type=pax")
-        .header("Cookie", cookies)
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
+    let response = get_response_text(
+        "https://www.airlinemanager.com/hangars.php?type=pax",
+        cookies,
+    )
+    .await;
 
     let max_capacity: i16 = get_element_by_selector(
         &response,
@@ -31,17 +25,11 @@ pub(crate) async fn get_pax_status(cookies: &str) -> (i16, i16, i16) {
 
 #[tokio::main]
 pub(crate) async fn get_cargo_status(cookies: &str) -> (i16, i16, i16) {
-    let client = reqwest::Client::new();
-
-    let response = client
-        .post("https://www.airlinemanager.com/hangars.php?type=cargo")
-        .header("Cookie", cookies)
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
+    let response = get_response_text(
+        "https://www.airlinemanager.com/hangars.php?type=cargo",
+        cookies,
+    )
+    .await;
 
     let max_capacity: i16 = get_element_by_selector(
         &response,

@@ -20,6 +20,10 @@ pub(crate) async fn login(username: &str, password: &str) -> String {
         .unwrap()
         .to_str()
         .unwrap();
+    
+    if !!!cookies.contains("PHPSESSID=") {
+        panic!("Login failed!");
+    }
 
     return cookies.to_string();
 }
