@@ -5,9 +5,9 @@ mod banking;
 mod co2;
 mod fuel;
 mod hanger;
+mod marketing;
 mod profits;
 mod utilities;
-mod marketing;
 
 fn main() {
     let username: String = env::var("USER").unwrap_or_default();

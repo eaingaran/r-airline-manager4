@@ -5,7 +5,6 @@ use crate::utilities::get_text_by_selector;
 use chrono::NaiveTime;
 use std::collections::HashMap;
 
-
 #[tokio::main]
 pub(crate) async fn get_aircraft_wise(cookies: &str, aircraft_type_id: &i16) {
     let response = get_response_text(
@@ -16,7 +15,7 @@ pub(crate) async fn get_aircraft_wise(cookies: &str, aircraft_type_id: &i16) {
 
     let planes: Vec<String> =
         get_elements_by_selector(&response, "body > div:nth-child(2) > div > div").await;
-    
+
     let mut plane_performance_index: HashMap<String, i64> = HashMap::new();
 
     for plane in planes.iter() {
