@@ -9,7 +9,7 @@ pub(crate) async fn get_status(cookies: &str) -> (i16, i32, i32, i32) {
         &response,
         "#fuelMain > div > div:nth-child(1) > span.text-danger > b",
     )
-    .await
+    .await.unwrap_or_else(|| "".to_string())
     .replace("$", "")
     .replace(" ", "")
     .replace(",", "")
@@ -17,13 +17,13 @@ pub(crate) async fn get_status(cookies: &str) -> (i16, i32, i32, i32) {
     .unwrap_or_default();
 
     let rem_capacity: i32 = get_text_by_selector(&response, "#remCapacity")
-        .await
+        .await.unwrap_or_else(|| "".to_string())
         .replace(",", "")
         .parse()
         .unwrap_or_default();
 
     let holding: i32 = get_text_by_selector(&response, "#holding")
-        .await
+        .await.unwrap_or_else(|| "".to_string())
         .replace(",", "")
         .parse()
         .unwrap_or_default();

@@ -1,6 +1,6 @@
-use crate::utilities::get_elements_text_by_selector;
 use crate::utilities::get_response_text;
 use crate::utilities::get_text_by_selector;
+use crate::utilities::get_texts_by_selector;
 
 #[tokio::main]
 pub(crate) async fn get_reputation(cookies: &str) -> (i16, i16) {
@@ -10,7 +10,7 @@ pub(crate) async fn get_reputation(cookies: &str) -> (i16, i16) {
         &response,
         "body > div > div:nth-child(1) > div:nth-child(1) > div",
     )
-    .await
+    .await.unwrap_or_else(|| "".to_string())
     .parse()
     .unwrap_or_default();
 
@@ -18,7 +18,7 @@ pub(crate) async fn get_reputation(cookies: &str) -> (i16, i16) {
         &response,
         "body > div > div:nth-child(1) > div:nth-child(2) > div",
     )
-    .await
+    .await.unwrap_or_else(|| "".to_string())
     .parse()
     .unwrap_or_default();
 
@@ -62,6 +62,5 @@ pub(crate) async fn start_cargo_campaign(cookies: &str) {
 pub(crate) async fn get_active_campaigns(cookies: &str) -> Vec<String> {
     let response = get_response_text("https://www.airlinemanager.com/marketing.php", cookies).await;
 
-    return get_elements_text_by_selector(&response, "#active-campaigns > table > tbody > tr")
-        .await;
+    return get_texts_by_selector(&response, "#active-campaigns > table > tbody > tr").await;
 }

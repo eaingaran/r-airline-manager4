@@ -8,13 +8,19 @@ mod hanger;
 mod marketing;
 mod profits;
 mod utilities;
+mod operations;
+mod maintenance;
 
 fn main() {
-    let username: String = env::var("USER").unwrap_or_default();
-    let password: String = env::var("PASS").unwrap_or_default();
+    use std::time::Instant;
+    let now = Instant::now();
+
+    let username: String = env::var("AM_USER").unwrap_or_default();
+    let password: String = env::var("AM_PASS").unwrap_or_default();
 
     let cookies: String = auth::login(&username, &password);
 
+    // informations
     print_bank_details(&cookies);
     print_co2_details(&cookies);
     print_fuel_details(&cookies);
@@ -22,12 +28,40 @@ fn main() {
     print_profit_details(&cookies);
     print_marketing_details(&cookies);
 
+    // actions
+    operations::perform_routine_operations(&cookies);
+    maintenance::maintain_planes(&cookies);
+
     auth::logout(cookies);
+
+    let elapsed = now.elapsed();
+    println!("Application took {:.2?}", elapsed);
 }
 
 fn print_profit_details(cookies: &str) {
-    profits::get_aircraft_wise(&cookies, &344); // 344, 308, 2
-    println!();
+    let (check_profit_mc24, check_profit_a339, check_profit_a388, check_profit_a388f) = (false, false, true, false);
+
+    if check_profit_mc24 {
+        profits::get_aircraft_wise(&cookies, &344);
+        println!();
+    }
+
+    if check_profit_a339 {
+        profits::get_aircraft_wise(&cookies, &308);
+        println!();
+    }
+
+    if check_profit_a388 {
+        profits::get_aircraft_wise(&cookies, &2);
+        println!();
+    }
+
+    // This will not work properly. 
+    // Pax and Cargo have different structures.
+    if check_profit_a388f {
+        profits::get_aircraft_wise(&cookies, &358);
+        println!();
+    }
 }
 
 fn print_bank_details(cookies: &str) {
@@ -92,9 +126,10 @@ fn print_marketing_details(cookies: &str) {
 
     println!("Airline reputation is {airline_reputation}");
     println!("Cargo reputation is {cargo_reputation}");
-    println!("Following campaigns are active");
+    println!();
+    println!("Following campaigns are active:");
     for campaign in active_campaigns {
-        println!("{}", campaign);
+        println!("  - {}", campaign);
     }
     println!();
 }
