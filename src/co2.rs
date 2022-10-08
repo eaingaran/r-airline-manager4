@@ -2,7 +2,6 @@ use crate::utilities::get_attr_by_selector;
 use crate::utilities::get_response_text;
 use crate::utilities::get_text_by_selector;
 
-#[tokio::main]
 pub(crate) async fn get_status(cookies: &str) -> (i16, i32, i32, i32, String) {
     let response = get_response_text("https://www.airlinemanager.com/co2.php", cookies).await;
 
@@ -56,7 +55,33 @@ pub(crate) async fn get_status(cookies: &str) -> (i16, i32, i32, i32, String) {
     }
 }
 
-#[tokio::main]
 pub(crate) async fn purchase(cookies: &str) {
-    // compute how much co2 quota needs to be bought and buy it.
+    let (co2_price, _co2_capacity, co2_holding, co2_to_buy, _airline_status) =
+        get_status(&cookies).await;
+
+    if co2_to_buy == 0 {
+        return;
+    }
+
+    if co2_price <= 120 {
+        get_response_text(
+            &format!("https://www.airlinemanager.com/fuel.php?mode=do&amount={co2_to_buy}"),
+            cookies,
+        )
+        .await;
+        println!("purchased {co2_to_buy}Lbs of fuel")
+    } else if co2_price <= 150 {
+        let co2_to_buy = 60000000 - co2_holding;
+        if co2_to_buy <= 0 {
+            return;
+        }
+        get_response_text(
+            &format!("https://www.airlinemanager.com/fuel.php?mode=do&amount={co2_to_buy}"),
+            cookies,
+        )
+        .await;
+        println!("purchased {co2_to_buy} Quotas of fuel")
+    } else {
+        println!("co2 quota price (${co2_price}) is too high");
+    }
 }

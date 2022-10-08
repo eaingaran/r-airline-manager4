@@ -1,38 +1,48 @@
+use crate::co2;
 use crate::departure;
+use crate::fuel;
+use crate::maintenance;
 use crate::marketing;
+use crate::purchase;
+use crate::routes;
 
 #[tokio::main]
 pub(crate) async fn perform_routine_operations(cookies: &str) {
-    // currently, we are not starting any campaigns.
-    // below is the code for it
-    let (airline_marketing_required, eco_marketing_required, cargo_marketing_required) =
-        (false, false, false);
+    // check and buy fuel
+    fuel::purchase(cookies).await;
 
-    if !!!(airline_marketing_required || eco_marketing_required || cargo_marketing_required) {
-        return;
-    }
+    // check and buy co2
+    co2::purchase(cookies).await;
 
-    let active_campaigns: Vec<String> = marketing::get_active_campaigns(cookies);
-
-    if !!!active_campaigns.contains(&"Eco friendly".to_string()) && eco_marketing_required {
-        marketing::start_eco_campaign(cookies);
-    }
-
-    if !!!active_campaigns.contains(&"Airline reputation".to_string()) && airline_marketing_required
-    {
-        marketing::start_airline_campaign(cookies);
-    }
-
-    if !!!active_campaigns.contains(&"Cargo reputation".to_string()) && cargo_marketing_required {
-        marketing::start_cargo_campaign(cookies);
-    }
+    // check the campaign status and start new campaigns if required
+    marketing::validate_campaigns(cookies, true, true, false).await;
 
     // depart planes (if reputation is above a reasonable level)
-    departure::depart_planes(cookies);
+    // departure::depart_planes(cookies);
+    // this is a temporary function. this needs to be revisited.
+    departure::temp_depart_planes(cookies).await;
+    departure::temp_depart_planes(cookies).await;
 
-    // buy fuel (if price is reasonable)
+    // check and buy fuel
+    fuel::purchase(cookies).await;
 
-    // buy co2 (if price is reasonable)
+    // check and buy co2
+    co2::purchase(cookies).await;
+
+    // perform A-check
+    maintenance::maintain_planes(cookies).await;
+
+    // route parked pax planes
+    routes::route_a388(cookies).await;
+
+    // route parked cargo planes
+    routes::route_a388f(cookies).await;
+
+    // buy pax planes (if there are empty spots in the hanger)
+    purchase::buy_a388(cookies).await;
+
+    // buy cargo planes (if there are empty spots in the hanger)
+    purchase::buy_a388f(cookies).await;
 
     // buy aircraft (if hanger space is available)
 }

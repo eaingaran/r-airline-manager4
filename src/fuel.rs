@@ -1,7 +1,6 @@
 use crate::utilities::get_response_text;
 use crate::utilities::get_text_by_selector;
 
-#[tokio::main]
 pub(crate) async fn get_status(cookies: &str) -> (i16, i32, i32, i32) {
     let response = get_response_text("https://www.airlinemanager.com/fuel.php", cookies).await;
 
@@ -36,7 +35,32 @@ pub(crate) async fn get_status(cookies: &str) -> (i16, i32, i32, i32) {
     return (price, capacity, holding, rem_capacity);
 }
 
-#[tokio::main]
 pub(crate) async fn purchase(cookies: &str) {
-    // compute how much fuel needs to be bought and buy it.
+    let (fuel_price, _fuel_capacity, fuel_holding, fuel_to_buy) = get_status(&cookies).await;
+
+    if fuel_to_buy == 0 {
+        return;
+    }
+
+    if fuel_price <= 400 {
+        get_response_text(
+            &format!("https://www.airlinemanager.com/fuel.php?mode=do&amount={fuel_to_buy}"),
+            cookies,
+        )
+        .await;
+        println!("purchased {fuel_to_buy} Lbs of fuel")
+    } else if fuel_price <= 700 {
+        let fuel_to_buy = 50000000 - fuel_holding;
+        if fuel_to_buy <= 0 {
+            return;
+        }
+        get_response_text(
+            &format!("https://www.airlinemanager.com/fuel.php?mode=do&amount={fuel_to_buy}"),
+            cookies,
+        )
+        .await;
+        println!("purchased {fuel_to_buy}Lbs of fuel")
+    } else {
+        println!("fuel price (${fuel_price}) is too high");
+    }
 }

@@ -12,7 +12,6 @@ struct PerformanceIndex {
     co2_index: i64,
 }
 
-#[tokio::main]
 pub(crate) async fn get_aircraft_wise(cookies: &str, aircraft_type_id: &i16) {
     let response = get_response_text(
         &format!("https://www.airlinemanager.com/fleet.php?type={aircraft_type_id}"),

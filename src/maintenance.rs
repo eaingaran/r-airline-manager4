@@ -2,12 +2,9 @@ use crate::utilities::get_attr_by_selector;
 use crate::utilities::get_response_text;
 use crate::utilities::get_text_by_selector;
 
-#[tokio::main]
-pub(crate) async fn maintain_planes(cookies: &str) -> Vec<String> {
+pub(crate) async fn maintain_planes(cookies: &str) {
     let response =
         get_response_text("https://www.airlinemanager.com/maint_plan.php", cookies).await;
-
-    let mut maintained_planes: Vec<String> = Vec::new();
 
     for i in 1..=300 {
         let plane_name = get_text_by_selector(
@@ -43,14 +40,12 @@ pub(crate) async fn maintain_planes(cookies: &str) -> Vec<String> {
             )
             .await
             .replace("controls", "");
-            // as of now, we are just checking. no need to take any actions.
-            // let result = get_response_text(format!("https://www.airlinemanager.com/maint_plan_do.php?mode=do&type=check&id={plane_id}"), cookies).await;
+            let _result = get_response_text(&format!("https://www.airlinemanager.com/maint_plan_do.php?mode=do&type=check&id={plane_id}"), cookies).await;
+            // result is in the below format
+            // in future, try to get the status from the result
+            // "\t\t\t\t\t<script>\r\n\t\t\t\t\tminus_content('headerAccount',6495861);maintUpdated = 1;statusListRemoveMaint(32552123);flightStatusChange(32552123,'pending',66567.18,1);markers[32552123].setIcon(selectedMarker[9]);$('#flightStatusWear32552123').html('0.00');$('#listTimer32552123Color').removeClass('glyphicons-wrench').addClass('glyphicons-asterisk');popup('maintenance_main.php','Maintenance');toast('Success','Maintenance planned','success');\t\t\t\t\t</script>\r\n\t\t\t\t\t<script>\r\n$('#maintView').hide();\r\n</script>"
             // println!("{:?}", result);
-            // temporarily added cloning because i need to use the value in a print statement.
-            // remove clone() after removing the print statement.
-            maintained_planes.push(plane_name.clone());
-            println!("plane {plane_name} needs maintenance")
+            println!("plane {plane_name} scheduled for maintenance")
         }
     }
-    return maintained_planes;
 }

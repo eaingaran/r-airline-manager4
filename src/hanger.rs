@@ -1,7 +1,6 @@
 use crate::utilities::get_element_by_selector;
 use crate::utilities::get_response_text;
 
-#[tokio::main]
 pub(crate) async fn get_pax_status(cookies: &str) -> (i16, i16, i16) {
     let response = get_response_text(
         "https://www.airlinemanager.com/hangars.php?type=pax",
@@ -23,7 +22,6 @@ pub(crate) async fn get_pax_status(cookies: &str) -> (i16, i16, i16) {
     return (max_capacity, in_use, free);
 }
 
-#[tokio::main]
 pub(crate) async fn get_cargo_status(cookies: &str) -> (i16, i16, i16) {
     let response = get_response_text(
         "https://www.airlinemanager.com/hangars.php?type=cargo",
