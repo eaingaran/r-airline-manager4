@@ -9,7 +9,8 @@ pub(crate) async fn get_balance(cookies: &str) -> i64 {
         &response,
         "#bankingAction > table > tbody > tr > td.text-success",
     )
-    .await.unwrap_or_else(|| "".to_string())
+    .await
+    .unwrap_or_else(|| "".to_string())
     .replace("$", "")
     .replace(" ", "")
     .replace(",", "")

@@ -10,7 +10,8 @@ pub(crate) async fn get_reputation(cookies: &str) -> (i16, i16) {
         &response,
         "body > div > div:nth-child(1) > div:nth-child(1) > div",
     )
-    .await.unwrap_or_else(|| "".to_string())
+    .await
+    .unwrap_or_else(|| "".to_string())
     .parse()
     .unwrap_or_default();
 
@@ -18,7 +19,8 @@ pub(crate) async fn get_reputation(cookies: &str) -> (i16, i16) {
         &response,
         "body > div > div:nth-child(1) > div:nth-child(2) > div",
     )
-    .await.unwrap_or_else(|| "".to_string())
+    .await
+    .unwrap_or_else(|| "".to_string())
     .parse()
     .unwrap_or_default();
 

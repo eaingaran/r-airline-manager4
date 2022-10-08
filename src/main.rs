@@ -3,13 +3,14 @@ use std::env;
 mod auth;
 mod banking;
 mod co2;
+mod departure;
 mod fuel;
 mod hanger;
+mod maintenance;
 mod marketing;
+mod operations;
 mod profits;
 mod utilities;
-mod operations;
-mod maintenance;
 
 fn main() {
     use std::time::Instant;
@@ -20,7 +21,7 @@ fn main() {
 
     let cookies: String = auth::login(&username, &password);
 
-    // informations
+    // information
     print_bank_details(&cookies);
     print_co2_details(&cookies);
     print_fuel_details(&cookies);
@@ -30,7 +31,7 @@ fn main() {
 
     // actions
     operations::perform_routine_operations(&cookies);
-    maintenance::maintain_planes(&cookies);
+    // maintenance::maintain_planes(&cookies);
 
     auth::logout(cookies);
 
@@ -39,12 +40,7 @@ fn main() {
 }
 
 fn print_profit_details(cookies: &str) {
-    let (check_profit_mc24, check_profit_a339, check_profit_a388, check_profit_a388f) = (false, false, true, false);
-
-    if check_profit_mc24 {
-        profits::get_aircraft_wise(&cookies, &344);
-        println!();
-    }
+    let (check_profit_a339, check_profit_a388, check_profit_a388f) = (false, true, false);
 
     if check_profit_a339 {
         profits::get_aircraft_wise(&cookies, &308);
@@ -56,7 +52,7 @@ fn print_profit_details(cookies: &str) {
         println!();
     }
 
-    // This will not work properly. 
+    // This will not work properly.
     // Pax and Cargo have different structures.
     if check_profit_a388f {
         profits::get_aircraft_wise(&cookies, &358);
@@ -107,7 +103,7 @@ fn print_hanger_details(cookies: &str) {
         "Current pax hanger usage is {}/{}",
         pax_hanger_in_use, pax_hanger_capacity
     );
-    println!("Can buy a maximum of {} pax aircrafts", pax_hanger_free);
+    println!("Can buy a maximum of {} pax aircraft", pax_hanger_free);
     println!();
 
     let (cargo_hanger_capacity, cargo_hanger_in_use, cargo_hanger_free): (i16, i16, i16) =
@@ -116,7 +112,7 @@ fn print_hanger_details(cookies: &str) {
         "Current cargo hanger usage is {}/{}",
         cargo_hanger_in_use, cargo_hanger_capacity
     );
-    println!("Can buy a maximum of {} cargo aircrafts", cargo_hanger_free);
+    println!("Can buy a maximum of {} cargo aircraft", cargo_hanger_free);
     println!();
 }
 

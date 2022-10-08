@@ -1,3 +1,4 @@
+use crate::departure;
 use crate::marketing;
 
 #[tokio::main]
@@ -6,7 +7,7 @@ pub(crate) async fn perform_routine_operations(cookies: &str) {
     // below is the code for it
     let (airline_marketing_required, eco_marketing_required, cargo_marketing_required) =
         (false, false, false);
-    
+
     if !!!(airline_marketing_required || eco_marketing_required || cargo_marketing_required) {
         return;
     }
@@ -27,10 +28,11 @@ pub(crate) async fn perform_routine_operations(cookies: &str) {
     }
 
     // depart planes (if reputation is above a reasonable level)
+    departure::depart_planes(cookies);
 
     // buy fuel (if price is reasonable)
 
     // buy co2 (if price is reasonable)
 
-    // buy aircrafts (if hanger space is available)
+    // buy aircraft (if hanger space is available)
 }

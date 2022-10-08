@@ -9,7 +9,8 @@ pub(crate) async fn get_status(cookies: &str) -> (i16, i32, i32, i32) {
         &response,
         "#fuelMain > div > div:nth-child(1) > span.text-danger > b",
     )
-    .await.unwrap_or_else(|| "".to_string())
+    .await
+    .unwrap_or_else(|| "".to_string())
     .replace("$", "")
     .replace(" ", "")
     .replace(",", "")
@@ -17,13 +18,15 @@ pub(crate) async fn get_status(cookies: &str) -> (i16, i32, i32, i32) {
     .unwrap_or_default();
 
     let rem_capacity: i32 = get_text_by_selector(&response, "#remCapacity")
-        .await.unwrap_or_else(|| "".to_string())
+        .await
+        .unwrap_or_else(|| "".to_string())
         .replace(",", "")
         .parse()
         .unwrap_or_default();
 
     let holding: i32 = get_text_by_selector(&response, "#holding")
-        .await.unwrap_or_else(|| "".to_string())
+        .await
+        .unwrap_or_else(|| "".to_string())
         .replace(",", "")
         .parse()
         .unwrap_or_default();
@@ -31,4 +34,9 @@ pub(crate) async fn get_status(cookies: &str) -> (i16, i32, i32, i32) {
     let capacity = rem_capacity + holding;
 
     return (price, capacity, holding, rem_capacity);
+}
+
+#[tokio::main]
+pub(crate) async fn purchase(cookies: &str) {
+    // compute how much fuel needs to be bought and buy it.
 }

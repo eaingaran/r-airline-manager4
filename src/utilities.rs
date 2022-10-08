@@ -1,3 +1,4 @@
+use chrono::NaiveTime;
 use reqwest;
 use scraper;
 
@@ -108,4 +109,29 @@ pub(crate) async fn get_response_text(url: &str, cookies: &str) -> String {
         .text()
         .await
         .unwrap_or_default();
+}
+
+pub(crate) async fn get_fight_duration(departure: &str, arrival: &str) -> i64 {
+    let dep_hr: Vec<String> = vec![departure.split(":").collect()];
+    let arr_hr: Vec<String> = vec![arrival.split(":").collect()];
+
+    let dep_hr: i64 = dep_hr[0].parse().unwrap_or_default();
+    let arr_hr: i64 = arr_hr[0].parse().unwrap_or_default();
+
+    if arr_hr > dep_hr {
+        return (NaiveTime::parse_from_str(arrival, "%H:%M:%S").unwrap()
+            - NaiveTime::parse_from_str(departure, "%H:%M:%S").unwrap())
+        .num_minutes()
+        .abs();
+    } else {
+        return 1440
+            - (NaiveTime::parse_from_str(arrival, "%H:%M:%S").unwrap()
+                - NaiveTime::parse_from_str(departure, "%H:%M:%S").unwrap())
+            .num_minutes()
+            .abs();
+    }
+}
+
+pub(crate) async fn get_seat_config() -> (i16, i16, i16) {
+    return (0, 0, 0);
 }

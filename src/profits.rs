@@ -1,8 +1,8 @@
 use crate::utilities::get_attr_by_selector;
 use crate::utilities::get_elements_by_selector;
+use crate::utilities::get_fight_duration;
 use crate::utilities::get_response_text;
 use crate::utilities::get_text_by_selector;
-use chrono::NaiveTime;
 use std::collections::HashMap;
 
 struct PerformanceIndex {
@@ -137,15 +137,13 @@ pub(crate) async fn get_aircraft_wise(cookies: &str, aircraft_type_id: &i16) {
 
         let average_income: i64 = total_income / count;
         let average_co2: i64 = total_co2 / count;
-        let (departure, arrival) = (
-            NaiveTime::parse_from_str(&departure, "%H:%M:%S").unwrap(),
-            NaiveTime::parse_from_str(&arrival, "%H:%M:%S").unwrap(),
-        );
-        // TODO: time difference doesn't seem to work properly 
+        // TODO: time difference doesn't seem to work properly
         // (when the departure time is late night and arrival is early morning) due to lack of date info.
         // check and fix this, if possible.
-        // possibly, write a custom time difference function to compute the differene properly.
-        let flight_duration = (departure - arrival).num_minutes().abs();
+        // possibly, write a custom time difference function to compute the different properly.
+        // let flight_duration = (arrival - departure).num_minutes().abs();
+
+        let flight_duration = get_fight_duration(&departure, &arrival).await;
 
         let performance_index = PerformanceIndex {
             age: plane_age,                                 // Plane age in months
