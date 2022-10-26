@@ -4,6 +4,7 @@ mod auth;
 mod banking;
 mod co2;
 mod departure;
+mod flights;
 mod fuel;
 mod hanger;
 mod maintenance;
@@ -14,34 +15,43 @@ mod purchase;
 mod routes;
 mod utilities;
 
-fn main() {
+#[tokio::main]
+async fn main() {
+    // utilities::find_routes(&0, &0, &0, &0, &0).await;
+
     use std::time::Instant;
     let now = Instant::now();
 
     let username: String = env::var("AM_USER").unwrap_or_default();
     let password: String = env::var("AM_PASS").unwrap_or_default();
 
-    let cookies: String = auth::login(&username, &password);
+    let cookies: String = auth::login(&username, &password).await;
 
     // information
-    // print_bank_details(&cookies);
-    // print_co2_details(&cookies);
-    // print_fuel_details(&cookies);
-    // print_hanger_details(&cookies);
-    // print_profit_details(&cookies);
-    // print_marketing_details(&cookies);
+    // print_bank_details(&cookies).await;
+    // print_co2_details(&cookies).await;
+    // print_fuel_details(&cookies).await;
+    // print_hanger_details(&cookies).await;
+    // print_profit_details(&cookies).await;
+    // print_marketing_details(&cookies).await;
 
     // actions
-    operations::perform_routine_operations(&cookies);
+    operations::perform_routine_operations(&cookies).await;
 
-    auth::logout(cookies);
+    // flights::validate_pax_plane(&cookies, 33983717).await;
+
+    auth::logout(cookies).await;
 
     let elapsed = now.elapsed();
     println!("Application took {:.2?}", elapsed);
 }
 
+async fn test_an225_routes() {
+    routes::find_an225_routes(&1).await;
+}
+
 async fn print_profit_details(cookies: &str) {
-    let (check_profit_a339, check_profit_a388, check_profit_a388f) = (false, false, false);
+    let (check_profit_a339, check_profit_a388, check_profit_a388f) = (false, true, false);
 
     if check_profit_a339 {
         profits::get_aircraft_wise(&cookies, &308).await;

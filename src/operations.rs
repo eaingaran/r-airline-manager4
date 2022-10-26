@@ -6,7 +6,6 @@ use crate::marketing;
 use crate::purchase;
 use crate::routes;
 
-#[tokio::main]
 pub(crate) async fn perform_routine_operations(cookies: &str) {
     // check and buy fuel
     fuel::purchase(cookies).await;
@@ -20,7 +19,6 @@ pub(crate) async fn perform_routine_operations(cookies: &str) {
     // depart planes (if reputation is above a reasonable level)
     // departure::depart_planes(cookies);
     // this is a temporary function. this needs to be revisited.
-    departure::temp_depart_planes(cookies).await;
     departure::temp_depart_planes(cookies).await;
 
     // check and buy fuel
@@ -43,6 +41,4 @@ pub(crate) async fn perform_routine_operations(cookies: &str) {
 
     // buy cargo planes (if there are empty spots in the hanger)
     purchase::buy_a388f(cookies).await;
-
-    // buy aircraft (if hanger space is available)
 }

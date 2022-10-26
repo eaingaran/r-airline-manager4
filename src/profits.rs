@@ -157,6 +157,8 @@ pub(crate) async fn get_aircraft_wise(cookies: &str, aircraft_type_id: &i16) {
 
         total_age = total_age + performance_index.age;
 
+        println!("Plane URL         :: https://www.airlinemanager.com/{url}");
+
         if !!!(performance_index.fuel_index == 374 || performance_index.fuel_index == 373) {
             println!("-------------------------------------------------------------");
             println!("Debug info");

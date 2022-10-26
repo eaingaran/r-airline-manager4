@@ -63,14 +63,14 @@ pub(crate) async fn purchase(cookies: &str) {
         return;
     }
 
-    if co2_price <= 120 {
+    if co2_price <= 115 {
         get_response_text(
             &format!("https://www.airlinemanager.com/fuel.php?mode=do&amount={co2_to_buy}"),
             cookies,
         )
         .await;
-        println!("purchased {co2_to_buy}Lbs of fuel")
-    } else if co2_price <= 150 {
+        println!("purchased {co2_to_buy} Lbs of fuel")
+    } else if co2_price <= 138 {
         let co2_to_buy = 60000000 - co2_holding;
         if co2_to_buy <= 0 {
             return;

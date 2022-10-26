@@ -1,7 +1,6 @@
 use http;
 use reqwest;
 
-#[tokio::main]
 pub(crate) async fn login(username: &str, password: &str) -> String {
     let client = reqwest::Client::new();
 
@@ -28,7 +27,6 @@ pub(crate) async fn login(username: &str, password: &str) -> String {
     return cookies.to_string();
 }
 
-#[tokio::main]
 pub(crate) async fn logout(cookies: String) {
     let client = reqwest::Client::new();
 

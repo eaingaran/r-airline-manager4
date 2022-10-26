@@ -49,3 +49,7 @@ pub(crate) async fn maintain_planes(cookies: &str) {
         }
     }
 }
+
+pub(crate) async fn reconfigure_planes(cookies: &str) {
+    return;
+}

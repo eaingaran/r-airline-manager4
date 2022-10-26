@@ -1,6 +1,7 @@
 use chrono::NaiveTime;
 use reqwest;
 use scraper;
+use serde::{Deserialize, Serialize};
 
 pub(crate) async fn get_elements_by_selector(response: &str, selector: &str) -> Vec<String> {
     let document = scraper::Html::parse_document(response);
@@ -63,6 +64,7 @@ pub(crate) async fn get_text_by_selector(response: &str, selector: &str) -> Opti
     if texts.len() > 0 {
         return Some(texts.get(0).map(String::as_str).unwrap().trim().to_string());
     } else {
+        println!("selector returned 0 results");
         return None;
     }
 }
@@ -130,6 +132,101 @@ pub(crate) async fn get_fight_duration(departure: &str, arrival: &str) -> i64 {
             .num_minutes()
             .abs();
     }
+}
+
+#[derive(Serialize, Deserialize)]
+pub(crate) struct airport {
+    id: i32,
+    iata: String,
+    icao: String,
+    runway: i32,
+    market: i32,
+    latitude: f32,
+    longitude: f32,
+    city: String,
+    country: String,
+    country_code: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub(crate) struct route {
+    id: String,
+    pub economic_demand: i32,
+    pub business_demand: i32,
+    pub first_class_demand: i32,
+    pub large_demand: i32,
+    pub heavy_demand: i32,
+    distance: i32,
+    departure: airport,
+    arrival: airport,
+}
+
+#[derive(Serialize, Deserialize)]
+
+pub(crate) struct request {
+    status: i32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub(crate) struct response {
+    request: request,
+    routes: Vec<route>,
+}
+
+pub(crate) async fn find_routes(
+    count: &u16,
+    capacity: &u16,
+    runway_length: &u16,
+    range: &u32,
+    speed: &u32,
+) -> Vec<String> {
+    println!("yet to be implemented...");
+    let hub_iata = "DEL";
+    let airport_runway = 12000;
+    for page_num in 1..500 {
+        let client = reqwest::Client::new();
+        let response = client.get(&format!("https://am4tools.com/route/search?departure={hub_iata}&sort=large&order=desc&page={page_num}&mode=hub")).send().await.ok().unwrap();
+        let status_code = response.status().as_u16();
+        if status_code == 404 {
+            println!("status code is {status_code}");
+            break;
+        }
+        let response_payload = response.text().await.unwrap_or_default();
+        let response_json: response = serde_json::from_str(&response_payload).unwrap();
+        for route in response_json.routes {
+            if route.distance as f32 > (*range as f32 * 1.1) {
+                continue;
+            }
+            let trip = (route.distance as f32 / (*speed as f32 * 1.1)).ceil();
+            if airport_runway < *runway_length {
+                continue;
+            }
+            println!("{}-{}", route.departure.iata, route.arrival.iata);
+        }
+        break;
+    }
+    return Vec::new();
+}
+
+pub(crate) async fn get_route_details(departure: &str, arrival: &str) -> Vec<route> {
+    let client = reqwest::Client::new();
+    // https://am4tools.com/route/search?departure=del&arrival=fra&mode=direct
+    let response = client
+        .get(&format!(
+            "https://am4tools.com/route/search?departure={departure}&arrival={arrival}&mode=direct"
+        ))
+        .send()
+        .await
+        .ok()
+        .unwrap();
+    let status_code = response.status().as_u16();
+    if status_code == 404 {
+        println!("status code is {status_code}");
+        println!("route {departure}-{arrival} not found");
+    }
+    let response_payload = response.text().await.unwrap_or_default();
+    let response_json: response = serde_json::from_str(&response_payload).unwrap();
+    return response_json.routes;
 }
 
 pub(crate) async fn get_seat_config() -> (i16, i16, i16) {
