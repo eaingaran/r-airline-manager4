@@ -27,9 +27,6 @@ pub(crate) async fn perform_routine_operations(cookies: &str) {
     // check and buy co2
     co2::purchase(cookies).await;
 
-    // perform A-check
-    maintenance::maintain_planes(cookies).await;
-
     // // route parked pax planes
     // routes::route_a388(cookies).await;
 

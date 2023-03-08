@@ -40,6 +40,9 @@ async fn main() {
 
     // flights::validate_pax_plane(&cookies, 33983717).await;
 
+    // // perform A-check
+    // maintenance::maintain_planes(&cookies).await;
+
     auth::logout(cookies).await;
 
     let elapsed = now.elapsed();
