@@ -196,4 +196,6 @@ pub(crate) async fn temp_depart_planes(cookies: &str) {
         cookies,
     )
     .await;
+
+    println!("planes departed");
 }

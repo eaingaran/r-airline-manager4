@@ -64,7 +64,6 @@ pub(crate) async fn get_text_by_selector(response: &str, selector: &str) -> Opti
     if texts.len() > 0 {
         return Some(texts.get(0).map(String::as_str).unwrap().trim().to_string());
     } else {
-        println!("selector returned 0 results");
         return None;
     }
 }
