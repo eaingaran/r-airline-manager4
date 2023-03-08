@@ -35,13 +35,13 @@ async fn main() {
     // print_profit_details(&cookies).await;
     // print_marketing_details(&cookies).await;
 
-    // actions
-    operations::perform_routine_operations(&cookies).await;
+    // // actions
+    // operations::perform_routine_operations(&cookies).await;
 
     // flights::validate_pax_plane(&cookies, 33983717).await;
 
-    // // perform A-check
-    // maintenance::maintain_planes(&cookies).await;
+    // perform A-check
+    maintenance::maintain_planes(&cookies).await;
 
     auth::logout(cookies).await;
 
