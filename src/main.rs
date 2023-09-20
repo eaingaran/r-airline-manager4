@@ -14,6 +14,7 @@ mod profits;
 mod purchase;
 mod routes;
 mod utilities;
+mod lounge;
 
 #[tokio::main]
 async fn main() {
@@ -42,6 +43,12 @@ async fn main() {
 
     // perform A-check
     maintenance::maintain_planes(&cookies).await;
+    
+    // maintan lounges
+    lounge::maintain_lounges(&cookies).await;
+
+    // buy hanger space
+    purchase::buy_hanger_space(&cookies).await;
 
     auth::logout(cookies).await;
 

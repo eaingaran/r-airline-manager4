@@ -99,6 +99,23 @@ pub(crate) async fn get_attr_by_selector(
     return element;
 }
 
+pub(crate) async fn get_attrs_by_selector(
+    response: &str,
+    selector: &str,
+    attribute: &str,
+) -> Vec<String> {
+    let document = scraper::Html::parse_document(response);
+
+    let selector = scraper::Selector::parse(selector).unwrap();
+
+    let elements: Vec<String> = document
+        .select(&selector)
+        .map(|x| x.value().attr(attribute).unwrap().to_string())
+        .collect();
+
+    return elements;
+}
+
 pub(crate) async fn get_response_text(url: &str, cookies: &str) -> String {
     let client = reqwest::Client::new();
     return client
