@@ -6,6 +6,8 @@ RUN apk add -U --no-cache ca-certificates
 # dockerhub - https://hub.docker.com/r/ekidd/rust-musl-builder
 FROM ekidd/rust-musl-builder:latest AS builder
 
+RUN rustup update
+
 COPY . .
 
 RUN cargo build --release --target x86_64-unknown-linux-musl
